@@ -1,0 +1,87 @@
+= Exercices PAJ : Lambdas 2
+Frédéric Moal <frederic.moal@univ-orleans.fr>
+:doctype: article
+
+
+== Exercice - interface Predicat
+
+. Ecrire une interface fonctionnelle `PredicatString` possédant une méthode `test`
+permettant de tester une condition sur une chaîne de caractère.
+. Utiliser cette interface fonctionnelle pour définir deux lambdas :
+nulle qui renvoie vrai quand la chaîne est `null` et vide quand elle est vide.
+Tester ces prédicats.
+. Ajouter une méthode `not` dans votre interface qui permet d'obtenir la négation d'un prédicat.
+. Utiliser cette méthode pour définir les prédicats nonNulle et nonVide, puis les tester.
+. Ajouter une méthode `and` dans votre interface qui permet d'obtenir un et logique entre deux prédicats.
+. Utiliser cette méthode pour définir le prédicat nonNulleEtNonVide, puis le tester dans tous les cas.
+
+. Redéfinir une nouvelle interface `Predicat<T>` avec T un type générique, avec les mêmes méthodes
+et les méthodes `or` et `xor` ; vérifier que vos tests précédents fonctionnent toujours avec cette nouvelle interface,
+et ajouter des tests de prédicats sur une classe `Personne` [en utilisant Lombok]
+avec au moins un prédicat qui teste si le nom d'une personne commence par un J ou bien si son prénom est de taille 4.
+
+Que se passe-t-il si le second predicat d'un `and` est `null` ?
+
+
+== Exercice - Fonction de fonctions
+
+* Ecrivez une méthode static addFunction qui prend un entier `n` en paramètre
+et qui retourne une fonction qui prend un entier en paramètre et qui retourne un Long
+qui est égal à cet entier+n
+
+* Utilisez cette méthode pour afficher la somme de 3 et de 5.
+
+* Créez une liste d'entiers. Utilisez ensuite cette méthode add pour transformer cette liste
+en une autre liste dont tous les éléments sont égaux aux éléments de la première liste + 78.
+Avec forEach faites afficher tous les éléments de la nouvelle liste.
+Par exemple, si on part d'une liste dont les éléments sont 1, 4, 7, 5,
+il sera affiché 79, 82, 85, 83 (un nombre par ligne).
+
+== Exercice - interfaces fonctionnelles, static & default
+
+Etant donnée la classe `Simpson`
+[source,java]
+----
+record Simpson(String nom, int age) {}
+----
+
+- On veut écrire une interface fonctionnelle pour vérifier qu'un objet Simpson
+est bien valide. Pour cela, on définit une interface `ValideSimpson`
+et la lambda `testAgePositif` qui ne fait rien quand l'âge du simpson est positif,
+mais qui lève une Runtime exception quand il est négatif.
++
+Par exemple :
+[source,java]
+----
+ValideSimpson testAgePositif = ... // à définir
+
+Simpson s1 = new Simpson("bart",8);
+Simpson s2 = new Simpson("homer", -3);
+testAgePositif.estValide(s1);           // <1>
+testAgePositif.estValide(s2);           // <2>
+----
+<1> ne fera rien,
+<2> provoquera "Exception in thread "main" java.lang.RuntimeException: age négatif pour Simpson(nom=homer, age=-3)"
+
+Donnez le code de l'interface `ValideSimpson` ainsi que de la lambda `testAgePositif`.
+
+- Cette interface `ValideSimpson` n'est pas très souple à utiliser ;
+on voudrait pouvoir écrire plus simplement des validations multiples sur un Simpson, en utilisant une syntaxe du type :
++
+[source,java]
+----
+ValideCompletSimpson valideCompletSimpson =
+        ValideCompletSimpson
+            .verifie( s->s.getAge()>0, "age négatif !")
+            .puisVerifie( s->s.getAge()<150, "age trop grand !")
+            .puisVerifie( s->s.getNom()!=null, "le nom est null !");
+
+valideCompletSimpson.estValide(s1);
+valideCompletSimpson.estValide(s2);
+----
+.. Donnez le type des paramètres entrants/sortant de `verifie` et `puisVerifie`
+.. Donnez la déclaration de ces deux méthodes
+.. Donnez le code de ces deux méthodes
+.. Donnez le code complet de `ValideCompletSimpson`
+
+
